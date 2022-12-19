@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AgentService {
 
-    void deleteAgent(Long agentId);
+    void deleteAgent(Long agentId) throws Exception;
 
     Agent addAgent(Agent agent) throws Exception;
 

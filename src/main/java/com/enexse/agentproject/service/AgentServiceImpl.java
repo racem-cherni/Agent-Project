@@ -29,19 +29,23 @@ public class AgentServiceImpl implements AgentService {
 
     // DELETE
     @Override
-    public void deleteAgent(Long agentId) {
+    public void deleteAgent(Long agentId) throws Exception {
 
-        agentRepository.deleteById(agentId);
-        System.out.println("Item with id " + agentId + " deleted...");
+        if(!agentRepository.findById(agentId).isPresent()) {
+            throw new Exception("agent with id: '" + agentId + "' does not exist");}
+        else {
+            agentRepository.deleteById(agentId);
+        }
     }
 
     // ADD
     @Override
     public Agent addAgent(Agent agent) throws Exception {
         if (agentRepository.findByName(agent.getName()) != null) {
-            System.out.println("agent with name " + agent.getName() + " already exist");
-            throw new Exception("agent with name " + agent.getName() + " already exist");
-        } else {
+            throw new Exception("agent with name : << " + agent.getName() + " >> already exist");
+        }
+
+        else {
             return agentRepository.save(agent);
         }
     }
@@ -49,15 +53,15 @@ public class AgentServiceImpl implements AgentService {
     @Override
     public Agent updateAgent(String agentName, Agent agent) throws Exception {
 
-        Agent oldAgent = agentRepository.findByName(agentName);
-
-            if (agentRepository.findByName(agent.getName()) != null && !agent.getName().equals(agentName)) {
-                System.out.println("agent with name " + agent.getName() + " already exist");
-                throw new Exception("agent with name " + agent.getName() + " already exist");
-            } else {
+         if(agentRepository.findByName(agentName) == null ) {
+            throw new Exception("agent with name : << " + agentName + " >> does not exist");
+        }
+           else if (agentRepository.findByName(agent.getName()) != null && !agent.getName().equals(agentName)) {
+                throw new Exception("name : <<" + agent.getName() + " >> already belongs to another agent");
+        }
+        else {
                 return agentRepository.save(agent);
             }
-
     }
 }
 

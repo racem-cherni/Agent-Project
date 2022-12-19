@@ -4,6 +4,8 @@ package com.enexse.agentproject.entity;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "agents")
@@ -18,6 +20,7 @@ public class Agent {
     private String os;
 
     @Column(name = "ip")
+    @Pattern(regexp = "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$")
     private String ip;
 
     @Column(name = "last_Keep_Alive")
@@ -27,6 +30,7 @@ public class Agent {
     private String dateAdd;
 
     @Column(name = "name")
+    @NotBlank(message = "The name is required")
     private String name;
 
     @Column(name = "version")
@@ -112,4 +116,5 @@ public class Agent {
                 ", status=" + status +
                 '}';
     }
+
 }

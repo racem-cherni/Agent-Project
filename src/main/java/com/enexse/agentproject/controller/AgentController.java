@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @RestController
@@ -24,31 +27,32 @@ public class AgentController {
     }
 
     @PostMapping("/agent")
-    public ResponseEntity<Agent> addAgent(@RequestBody Agent agent) {
+    public ResponseEntity<?> addAgent(@Valid @RequestBody Agent agent) {
         try {
             agentService.addAgent(agent);
             return new ResponseEntity<>(agent, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/{name}")
-    public ResponseEntity<Agent> updateAgent(@PathVariable (value = "name") String name,@RequestBody Agent agent) {
+    public ResponseEntity<?> updateAgent(@PathVariable (value = "name") @NotBlank  String name, @Valid @RequestBody Agent agent) {
         try {
             return new ResponseEntity<>(agentService.updateAgent(name,agent), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> deleteAgent(@PathVariable (value = "id") Long agentId) throws ClassNotFoundException {
-       Agent agent = agentService.getAgent(agentId);
-       if (agent == null){
-           return new ResponseEntity<String>("Agent not existed!.", HttpStatus.NOT_FOUND    );
-       }
-        return new ResponseEntity<String>("Agent deleted successfully!.", HttpStatus.OK);
+    public ResponseEntity<String> deleteAgent(@PathVariable (value = "id") @NotBlank @Min(1)  Long agentId)  {
+        try {
+            agentService.deleteAgent(agentId);
+            return new ResponseEntity<String>("Agent deleted successfully!.", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
 }
