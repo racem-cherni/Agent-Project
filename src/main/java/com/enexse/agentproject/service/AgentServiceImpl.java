@@ -53,13 +53,15 @@ public class AgentServiceImpl implements AgentService {
     @Override
     public Agent updateAgent(String agentName, Agent agent) throws Exception {
 
-         if(agentRepository.findByName(agentName) == null ) {
+        Agent oldAgent = agentRepository.findByName(agentName);
+         if(oldAgent == null ) {
             throw new Exception("agent with name : << " + agentName + " >> does not exist");
         }
            else if (agentRepository.findByName(agent.getName()) != null && !agent.getName().equals(agentName)) {
                 throw new Exception("name : <<" + agent.getName() + " >> already belongs to another agent");
         }
         else {
+            if(agent.getId()==null) agent.setId(oldAgent.getId());
                 return agentRepository.save(agent);
             }
     }
